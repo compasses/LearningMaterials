@@ -376,3 +376,49 @@ var add_the_handlers = function (nodes) {
 		}(i);
 	}
 };
+
+//callbacks make an asynchronously
+
+// Module
+
+String.method('deentityify', function() {
+	//The entity table. It maps entity names to characters
+	var entity = {
+		quot: '"',
+		lt:'<',
+		gt:'>'
+	};
+
+	return function () {
+		// this is the deentityify method, it calls the string replace method, looking for substrings that start
+		// with '&' and end with ';'. if the characters in between are in the entity table, the replace the entity
+		//with the characters from the table. it uses a regular expression
+		return this.replace(/&([^&;]+);/g,
+				function (a, b) {
+					var r = entity[b];
+					return typeof r === 'string' ? r : a;
+				});
+	};
+}());
+
+println('&lt;&quot;&gt;'.deentityify());
+
+//Memoization
+
+var fibonacci = function () {
+	var memo = [0, 1];
+	var fib = function (n) {
+		var result = memo[n];
+		if (typeof result !== 'number') {
+			result = fib(n-1) + fib(n-2);
+			memo[n] = result;
+		} 
+		return result;
+	};
+	return fib;
+}();
+
+for (var i = 0; i <= 10; ++ i) {
+	println(fibonacci(i));
+}
+
