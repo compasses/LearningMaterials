@@ -422,3 +422,59 @@ for (var i = 0; i <= 10; ++ i) {
 	println(fibonacci(i));
 }
 
+/*
+We can generalize this by making a function that helps us make memoized functions.
+The memoizer function will take an initial memo array and the fundamental function.
+It returns a shell function that manages the memo store and that calls the
+fundamental function as needed. We pass the shell function and the function’s
+parameters to the fundamental function:
+*/
+var memoizer = function (memo, fundamental) {
+	var shell = function (n) {
+		var result = memo[n];
+		if (typeof result !== 'number') {
+			result = fundamental(shell, n);
+			memo[n] = result;
+		}
+		return result;
+	};
+	return shell;
+};
+
+var fibonacci2 = memoizer([0, 1], function(shell, n){
+	return shell(n-1) + shell(n-2);
+});
+
+var factorial = memoizer([1, 1], function (shell, n) {
+return n * shell(n - 1);
+});
+
+for (var i = 0; i <= 10; ++ i) {
+	println(fibonacci2(i));
+}
+
+var serial_maker = function () {
+	var prefix = "";
+	var seq = 0;
+	return {
+		set_prefix: function (p) {
+			prefix = String(p);
+		},
+		set_seq: function (s) {
+			seq = s;
+		},
+		gensym : function () {
+			var result = prefix + seq;
+			seq += 1;
+			return result;
+		}
+	};
+};
+
+var seqer = serial_maker();
+
+println(seqer);
+
+seqer.set_prefix('Q');
+seqer.set_seq(1000);
+println(seqer.gensym());
