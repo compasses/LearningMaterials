@@ -602,3 +602,100 @@ var coolcat = function (spec) {
 var myCoolCat = coolcat({name: 'bix'});
 
 println(myCoolCat.get_name());
+
+var is_array = function (value) {
+	return value &&
+	typeof value === 'object' &&
+	typeof value.length === 'number' &&
+	typeof value.splice === 'function' &&
+	!(value.propertyIsEnumerable('length'));
+};
+
+Array.method('reduce', function (f, value) {
+	var i;
+	for (i = 0; i < this.length; i += 1) {
+		value = f(this[i], value);
+	}
+	return value;
+});
+
+// Create an array of numbers.
+var data = [4, 8, 15, 16, 23, 42];
+// Define two simple functions. One will add two
+// numbers. The other will multiply two numbers.
+var add = function (a, b) {
+	return a + b;
+};
+var mult = function (a, b) {
+	return a * b;
+};
+
+// Invoke the data's reduce method, passing in the
+// add function.
+var sum = data.reduce(add, 0); // sum is 108
+println(sum);
+// Invoke the reduce method again, this time passing
+// in the multiply function.
+var product = data.reduce(mult, 1);
+// product is 7418880
+println(product);
+
+// Give the data array a total function.
+data.total = function ( ) {
+	return this.reduce(add, 0);
+};
+
+var total = data.total( ); // total is 108
+
+Array.dim = function (dimension, initial) {
+	var a = [], i;
+	for (i = 0; i < dimension; i += 1) {
+		a[i] = initial;
+	}
+	return a;
+};
+
+Array.matrix = function (m, n, initial) {
+	var a, i, j, mat = [];
+	for (i = 0; i < m; i += 1) {
+		a = [];
+		for (j = 0; j < n; j += 1) {
+			a[j] = initial;
+		}
+		mat[i] = a;
+	}
+	return mat;
+};
+// Make a 4 * 4 matrix filled with zeros.
+var myMatrix = Array.matrix(4, 4, 0);
+println(myMatrix[3][3]); // 0
+// Method to make an identity matrix.
+Array.identity = function (n) {
+	var i, mat = Array.matrix(n, n, 0);
+	for (i = 0; i < n; i += 1) {
+		mat[i][i] = 1;
+	}
+	return mat;
+};
+myMatrix = Array.identity(4);
+println(myMatrix[3][3]); // 1
+
+var parse_url = /^(?:([A-Za-z]+):)?(\/{0,3})([0-9.\-A-Za-z]+)(?::(\d+))?(?:\/([^?#]*))?(?:\?([^#]*))?(?:#(.*))?$/;
+var url = "http://www.ora.com:80/goodparts?q#fragment";
+
+var result = parse_url.exec(url);
+var names = ['url', 'scheme', 'slash', 'host', 'port',
+'path', 'query', 'hash'];
+var blanks = ' ';
+var i;
+println(result);
+for (i = 0; i < names.length; i += 1) {
+	println(names[i] + ':' + blanks.substring(names[i].length), result[i]);
+}
+
+
+
+
+
+
+
