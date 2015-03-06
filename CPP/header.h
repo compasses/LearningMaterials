@@ -266,6 +266,10 @@ public:
         rear = (rear + 1) % size;
         return true;
     }
+    
+    bool Empty() {
+        return front==rear;
+    }
 
     bool
     Dequeue(T &t)
@@ -1192,7 +1196,8 @@ class CGraph
 {
     enum
     {
-        MAXV = 1000
+        MAXV = 1000,
+        MAXDIS = 0xfffffff
     };
 
     typedef struct EdgeNode
@@ -1215,7 +1220,15 @@ private:
     int nedges;
     bool directed;
 public:
+    enum COLOR{
+        WHITE, GRAY,BLACK
+    };
     bool IsVisited[MAXV];
+    COLOR color[MAXV];
+    int distance[MAXV];
+    int fist[MAXV];
+    int parient[MAXV];
+    int time;
     
     
     CGraph():nvertices(0), nedges(0), directed(false)
@@ -1305,6 +1318,127 @@ public:
             }
         }
     }
+    
+    void BFSTraverse() {
+        memset(IsVisited, 0, sizeof(IsVisited));
+        CQueue<int> queue;
+        for (int i = 0; i < nvertices; ++i) {
+            if (!IsVisited[i]) {
+                IsVisited[i] = true;
+                visit(i);
+                queue.Enqueue(i);
+                while (!queue.Empty()) {
+                    int v;
+                    queue.Dequeue(v);
+                    for (int w = FirstAdjVex(v); w >= 0; w = NextAdjVex(v, w)) {
+                        if (!IsVisited[w]) {
+                            IsVisited[w] = true;
+                            visit(w);
+                            queue.Enqueue(w);
+                        }
+                    }
+                }
+            }
+        }                
+    }
+    
+    void PrintPath(int s, int v) {
+        if (s == v) {
+            visit(v);
+            cout << " distance : " << distance[v];
+        } else if (parient[v] == -1) {
+            cout << "not path from " << s << " to " << v << endl;
+        } else {
+            PrintPath(s, parient[v]);
+            visit(v);
+            cout << " distance : " << distance[v];
+        }
+    }
+    
+    void BFS() {
+        BFS(2);
+        cout << "print path:";
+        PrintPath(2, 6);
+    }
+    void BFS(int v) {
+        for (int i = 0; i < nvertices; ++i) {
+            if (i == v)
+                continue;
+            color[i] = WHITE;
+            distance[i] = MAXDIS;
+            parient[i] = -1;
+        }
+        
+        color[v] = GRAY;
+        distance[v] = 0;
+        parient[v] = -1;
+        visit(v);
+            
+        CQueue<int> queue;
+        queue.Enqueue(v);
+        while (!queue.Empty()) {
+            int u;
+            queue.Dequeue(u);
+            for (int w = FirstAdjVex(u); w >= 0; w = NextAdjVex(u, w)) {
+                if (color[w] == WHITE) {
+                    visit(w);
+                    distance[w] = distance[u] + 1;
+                    parient[w] = u;    
+                    color[w] = GRAY;
+                    queue.Enqueue(w);
+                }
+                color[w] = BLACK;
+            }
+            
+        }
+        
+    }
+
+    void DFSAdvance() {
+        for (int i = 0; i < nvertices; ++i) {
+            color[i] = WHITE;
+            parient[i] = -1;            
+        }
+        
+        time = 0;
+        for (int i = 0; i < nvertices; ++i) {
+            if (color[i] == WHITE) {
+                DFSAdvance(i);
+            }
+        }
+        
+    }
+    
+    void DFSAdvance(int v) {
+        time++;
+        distance[v] = time;
+        color[v] = GRAY;
+        for (int w = FirstAdjVex(v); w >= 0; w = NextAdjVex(v, w)) { 
+            if (color[w] == WHITE) {
+                visit(w);
+                parient[w] = v;
+                DFSAdvance(w);
+            }
+        }
+        
+        color[v] = BLACK;
+        time++;
+        fist[v] = time;
+        
+    }
+    
+    static void TestG(CGraph &graph) {
+        cout << "DFS: ";
+        graph.DFSTraverse();
+        
+        cout << "BFS: ";
+        graph.BFSTraverse();
+        
+        cout << "BFS2: ";
+        graph.BFS();
+        
+    }
+    
     static  void Test() {
         CGraph<int> graph;
         graph.InsertEdge(0, 1, false);
@@ -1313,11 +1447,25 @@ public:
         graph.InsertEdge(3, 2, false);
         graph.InsertEdge(1, 4, false);
         graph.InsertEdge(2, 4, false);
+        TestG(graph);
         
-        graph.DFSTraverse();
+        CGraph<int> g;
+        g.InsertEdge(0, 1, false);
+        g.InsertEdge(1, 2, false);
+        g.InsertEdge(2, 3, false);
+        g.InsertEdge(3, 4, false);
+        g.InsertEdge(3, 5, false);
+        
+        g.InsertEdge(4, 5, false);
+        g.InsertEdge(4, 6, false);
+        g.InsertEdge(4, 7, false);
 
-
-
+        g.InsertEdge(6, 7, false);
+        TestG(g);
+    }
+    
+    static void TestDirected() {
+        
     }
     
     
