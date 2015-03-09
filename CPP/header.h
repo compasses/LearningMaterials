@@ -928,11 +928,23 @@ public:
         length = 0;
         listSize = LIST_INIT_SIZE;
     }
+    List(int a[], int len) {
+        elem = new T[LIST_INIT_SIZE];
+        length = 0;
+        listSize = LIST_INIT_SIZE;
+        
+        for (int i = 0; i < len; ++i) {
+            ListInsert_Sq(i+1, a[i]);
+        }
+    }
 
     int
     ListLength()
     {
         return length;
+    }
+    int SetLength(int i) {
+        length = i;
     }
 
     void
@@ -947,7 +959,7 @@ public:
     bool
     ListInsert_Sq(int i, T t)
     {
-        if (i < 1 || i > length + 1) {
+        if (i < 1 ) {
             return false;
         }
         if (length >= listSize) {
@@ -1108,6 +1120,210 @@ public:
 };
 
 template <typename T>
+class MFSet{
+    enum {
+        DEFAULT_SIZE = 100
+    };
+    typedef struct PNODE {
+        T data;
+        int parient;
+        PNODE() : data(0), parient(0){}
+    }PNode;
+public:
+    PNode nodes[DEFAULT_SIZE];
+    int r, n;
+public:
+    MFSet():r(0),n(DEFAULT_SIZE){}
+    
+    int FindRoot(int v) {
+        if (v < 0 || v > n) {
+            return -1;
+        }
+        int j;
+        for (j = v; nodes[j].parient >= 0; j = nodes[j].parient)
+            ;
+        return j;
+    }
+    
+    bool IsEqual(int v, int u) {
+        int rv = FindRoot(v);
+        int ru = FindRoot(u);
+        
+        if (rv == ru && rv != -1) {
+            return true;
+        }
+        
+        return false;
+    }
+    
+    bool MerageSet(int v, int u) {
+        if (v < 0 || v > n || u < 0 || u > n) {
+            return false;
+        }
+        nodes[v].parient = u;
+        return true;
+    }
+    bool MerageSetOp(int v, int u) {
+        if (v < 0 || v > n || u < 0 || u > n) {
+            return false;
+        }
+        
+        if (nodes[v].parient > nodes[u].parient) {
+            nodes[u].parient += nodes[v].parient + 1;
+            nodes[v].parient = u;
+        } else {
+            nodes[v].parient += nodes[u].parient + 1;
+            nodes[u].parient = v;
+        }
+        return true;
+    }
+    
+    int Compress(int v) {
+        //find the child set of v, and change the path between v and root to be root's child
+        if (v < 0 || v > n) {
+            return -1;
+        }
+        int u, k;
+        for (u = v; nodes[u].parient > 0; u = nodes[u].parient)
+            ;
+        int t;
+        for (k = v; k != u; k = t) {
+            t = nodes[k].parient;
+            nodes[k].parient = u;
+        }
+        
+        return u;
+    }
+    
+    friend ostream & operator << (ostream &os, MFSet &s) {
+        os << endl;
+        for (int i = 0; i < s.n; ++i) {
+            os << i << " root " << s.nodes[i].parient << endl;
+        }
+        return os;
+    }
+    
+    static void Test() {
+        MFSet<int> set;
+        set.MerageSetOp(0, 1);
+        set.MerageSetOp(2, 3);
+        set.MerageSetOp(4, 5);
+        set.MerageSetOp(6, 7);
+        
+        set.MerageSetOp(1, 5);
+        
+        cout << set << endl;
+        
+    }
+};
+
+
+template <typename T>
+class CHeapQueue{
+    enum{
+        HEAP_SIZE = 100
+    };
+private:
+    List<T> arr;
+public:
+    CHeapQueue(){}
+    CHeapQueue(int a[], int len):arr(a, len){}
+    
+    int parient(int i) {
+        if (i == 0) {
+            return -1;
+        }
+        return i/2;
+    }
+    int left(int i) {
+        return 2*i + 1;
+    }
+    int right(int i) {
+        return 2*(i + 1);
+    }
+    
+    List<T>& getArr() {
+        return arr;
+    }
+    
+    void MaxHeapify(int i) {
+        int l = left(i);
+        int r = right(i);
+        int largest = i;
+        
+        if (l < arr.ListLength() && arr[l] > arr[i]) {
+            largest = l;
+        }
+        if (r < arr.ListLength() && arr[r] > arr[largest]) {
+            largest = r;
+        }
+        if (largest != i) {
+            std::swap(arr[i], arr[largest]);
+            MaxHeapify(largest);
+        }
+    }
+    
+    void BuildMaxHeap() {
+        for (int i = arr.ListLength()/2; i >=0; --i) {            
+            MaxHeapify(i);
+        }
+    }
+    
+    T Maximum() {
+        return arr[0];
+    }
+    
+    T ExtractMax() {
+        T max = arr[0];
+        arr[0] = arr[arr.ListLength()-1];
+        arr.SetLength(arr.ListLength()-1);
+        MaxHeapify(0);
+        return max;
+    }
+    
+    T HeapInsert(T key) {
+        arr.ListInsert_Sq(arr.ListLength() + 1, key);
+        int i = arr.ListLength() - 1 ;
+        while (i>0 && arr[parient(i)] < arr[i]) {
+            std::swap(arr[parient(i)], arr[i]);
+            i = parient(i);
+        }
+    }
+    
+    void HeapSort() {
+        BuildMaxHeap();
+        cout << "maxheap: " << arr << endl;
+        int len = arr.ListLength();
+        int res = arr.ListLength();
+        for (int i = arr.ListLength()-1; i >= 1; --i) {
+            std::swap(arr[0], arr[i]);
+            cout << "start: " << "len" << len << arr << endl;
+            arr.SetLength(--len);
+            MaxHeapify(0);
+        }
+        arr.SetLength(res);
+    }
+    
+    friend ostream & operator << (ostream &os, CHeapQueue &h) {
+        os << h.getArr() << endl;
+        return os;
+    }
+    
+    static void Test() {
+        int a[] = {5, 13, 2, 25, 7, 17, 20, 8, 4};
+        CHeapQueue<int> hq(a, 9);
+        hq.HeapSort();
+        cout << "Heap Sort: " << hq;
+        CHeapQueue<int> hq2;
+        for (int i = 0; i < 9; ++i) {
+            hq2.HeapInsert(a[i]);
+        }
+        cout << "hq2: " << hq2 << endl;
+    }
+    
+};
+
+template <typename T>
 class CSort
 {
 private:
@@ -1171,20 +1387,42 @@ public:
             }
         }
     }
-
+    static void QuickSort(List<T> &arr) {
+        int low = 0;
+        int high = arr.ListLength() - 1;
+        QuickSortPartiation(arr, low, high);
+    }
+    
+    static void QuickSortPartiation(List<T> &arr, int low, int high) {
+        int mid = (low + high) / 2;
+        int i = low, j = high;
+        while (i <= j) {
+            while (i <= high && arr[i] < arr[mid]) ++i;
+            while (j >= 0 &&arr[j] > arr[mid]) --j;
+            std::swap(arr[i], arr[j]);
+        }
+        if (low > 0)
+            QuickSortPartiation(arr, low, mid - 1);
+        
+        QuickSortPartiation(arr, mid + 1, high);
+    }
+    
     static void
     Test()
     {
         int a[] = {49, 38, 65, 97, 76, 13, 27, 49};
-        List<int> li, ai;
+        List<int> li, ai, bi;
         for (int i = 0; i < 8; ++i) {
             li.ListInsert_Sq(i + 1, a[i]);
             ai.ListInsert_Sq(i + 1, a[i]);
+            bi.ListInsert_Sq(i + 1, a[i]);
         }
         CSort::InsertSort(li);
-        cout << li << endl;
+        cout << "InsertSort : " << li << endl;
         CSort::BinSearchInsertSort(ai);
-        cout << ai << endl;
+        cout << "BinarySearch Sort: " << ai << endl;
+        CSort::QuickSort(bi);
+        cout << "QuickSort: " << bi << endl;
 
     }
 
@@ -1239,16 +1477,32 @@ public:
         }
     }
     
+    void PrintAdj() {
+        cout << "total vertices: " << nvertices << endl;
+        for (int i = 0; i < nvertices; ++i) {
+            cout << i << " -> " ;
+            for (int w = FirstAdjVex(i); w >= 0; w = NextAdjVex(i, w)) {
+                cout << w << " -> ";
+            }
+            cout << endl;
+        }
+    }
+    
+    void CreateNode(int v) {
+        if (edges[v] == 0) {
+            edges[v] = new EdgeNode(v);
+            nvertices++;
+        }
+    }
     
     void InsertEdge(int from, int to) {
         if (from > MAXV || to > MAXV) {
             return;
         }
         
-        if (edges[from] == 0) {
-            edges[from] = new EdgeNode(from);
-            nvertices++;
-        }
+        CreateNode(from);
+        CreateNode(to);
+                
         EdgeNode *p = edges[from];
         while (p->next != NULL && p->y != to){
             p = p->next;
@@ -1277,7 +1531,7 @@ public:
         }
     }
     int FirstAdjVex(int v) {
-        if (edges[v] == NULL) {
+        if (edges[v] == NULL || edges[v]->next == NULL) {
             return -1;
         }
         return edges[v]->next->y;
@@ -1413,18 +1667,22 @@ public:
         time++;
         distance[v] = time;
         color[v] = GRAY;
-        for (int w = FirstAdjVex(v); w >= 0; w = NextAdjVex(v, w)) { 
-            if (color[w] == WHITE) {
-                visit(w);
+        visit(v);
+        for (int w = FirstAdjVex(v); w >= 0; w = NextAdjVex(v, w)) {
+            //cout << "start : v " << v << " w "  << w << endl;
+            if (color[w] == WHITE) {                
                 parient[w] = v;
                 DFSAdvance(w);
+            } else if (color[w] == GRAY) {
+                cout << "has cycle " << endl;
             }
         }
         
         color[v] = BLACK;
+        
         time++;
         fist[v] = time;
-        
+        cout << " topological :  " << v << " " << " time: " << time << endl;
     }
     
     static void TestG(CGraph &graph) {
@@ -1465,6 +1723,27 @@ public:
     }
     
     static void TestDirected() {
+        CGraph<char> g;
+        g.InsertEdge(1, 0, true);
+        g.InsertEdge(0, 2, true);
+        //g.InsertEdge(2, 1, true);
+        g.InsertEdge(3, 1, true);
+        g.InsertEdge(3, 2, true);
+        g.InsertEdge(3, 4, true);
+        g.InsertEdge(4, 5, true);
+        g.InsertEdge(5, 6, true);
+        //g.InsertEdge(6, 5, true);
+        
+        g.InsertEdge(4, 7, true);
+        //g.InsertEdge(7, 3, true);
+        g.InsertEdge(8, 7, true);  
+        g.InsertEdge(9, 7, true);
+        g.InsertEdge(8, 9, true);
+        
+        g.PrintAdj();
+        g.DFSAdvance();
+
+        
         
     }
     
