@@ -286,7 +286,6 @@ public:
 
 class Mazepath
 {
-
     enum DIR
     {
         LEFT = 0, RIGHT, UP, DOWN
@@ -1219,15 +1218,40 @@ public:
 
 
 template <typename T>
+class Comp{
+
+public:
+    virtual bool operator() (T& t1, T& t2) = 0;
+};
+
+template <typename T>
+class Less : public Comp<T>{
+public:
+    bool operator() (T &t1, T &t2) {
+        return t1 < t2;
+    }
+};
+
+template <typename T> 
+class Greater: public Comp<T> {
+public:
+    bool operator() (T &t1, T &t2) {
+        return t1 > t2;
+    }
+};
+
+
+template <typename T>
 class CHeapQueue{
     enum{
         HEAP_SIZE = 100
     };
 private:
     List<T> arr;
+    bool isSort;
 public:
-    CHeapQueue(){}
-    CHeapQueue(int a[], int len):arr(a, len){}
+    CHeapQueue():isSort(false){}
+    CHeapQueue(int a[], int len):arr(a, len), isSort(false){}
     
     int parient(int i) {
         if (i == 0) {
@@ -1246,26 +1270,26 @@ public:
         return arr;
     }
     
-    void MaxHeapify(int i) {
+    void MaxHeapify(int i, Comp<int> &comp) {
         int l = left(i);
         int r = right(i);
         int largest = i;
         
-        if (l < arr.ListLength() && arr[l] > arr[i]) {
+        if (l < arr.ListLength() && comp(arr[l],  arr[i])) {
             largest = l;
         }
-        if (r < arr.ListLength() && arr[r] > arr[largest]) {
+        if (r < arr.ListLength() && comp(arr[r], arr[largest])) {
             largest = r;
         }
         if (largest != i) {
             std::swap(arr[i], arr[largest]);
-            MaxHeapify(largest);
+            MaxHeapify(largest, comp);
         }
     }
     
-    void BuildMaxHeap() {
+    void BuildMaxHeap(Comp<int> &comp) {
         for (int i = arr.ListLength()/2; i >=0; --i) {            
-            MaxHeapify(i);
+            MaxHeapify(i, comp);
         }
     }
     
@@ -1273,11 +1297,11 @@ public:
         return arr[0];
     }
     
-    T ExtractMax() {
+    T Extract(Comp<int> &comp) {
         T max = arr[0];
         arr[0] = arr[arr.ListLength()-1];
         arr.SetLength(arr.ListLength()-1);
-        MaxHeapify(0);
+        MaxHeapify(0, comp);
         return max;
     }
     
@@ -1290,8 +1314,8 @@ public:
         }
     }
     
-    void HeapSort() {
-        BuildMaxHeap();
+    void HeapSort(Comp<int> &comp) {
+        BuildMaxHeap(comp);
         cout << "maxheap: " << arr << endl;
         int len = arr.ListLength();
         int res = arr.ListLength();
@@ -1299,9 +1323,10 @@ public:
             std::swap(arr[0], arr[i]);
             cout << "start: " << "len" << len << arr << endl;
             arr.SetLength(--len);
-            MaxHeapify(0);
+            MaxHeapify(0, comp);
         }
         arr.SetLength(res);
+        isSort = true;
     }
     
     friend ostream & operator << (ostream &os, CHeapQueue &h) {
@@ -1311,14 +1336,24 @@ public:
     
     static void Test() {
         int a[] = {5, 13, 2, 25, 7, 17, 20, 8, 4};
-        CHeapQueue<int> hq(a, 9);
-        hq.HeapSort();
-        cout << "Heap Sort: " << hq;
+        CHeapQueue<int> hqmax(a, 9), hqmin(a, 9);
+        Less<int> less;
+        Greater<int> great;
+        hqmax.HeapSort(great);
+        hqmin.HeapSort(less);
+        cout << "Heap Sort max: " << hqmax << " min :" << hqmin << endl;
+        cout << "extract max: " << hqmax.Extract(great) << "res: " << hqmax << endl;
+        cout << "extract min: " << hqmin.Extract(less) << "res: " << hqmin << endl;
+        hqmax.HeapSort(great);
+        hqmin.HeapSort(less);
+        cout << "Heap Sort max: " << hqmax << " min :" << hqmin << endl;
+        
         CHeapQueue<int> hq2;
         for (int i = 0; i < 9; ++i) {
             hq2.HeapInsert(a[i]);
         }
         cout << "hq2: " << hq2 << endl;
+        
     }
     
 };
@@ -1390,21 +1425,29 @@ public:
     static void QuickSort(List<T> &arr) {
         int low = 0;
         int high = arr.ListLength() - 1;
-        QuickSortPartiation(arr, low, high);
+        QuickSort(arr, low, high);
     }
     
-    static void QuickSortPartiation(List<T> &arr, int low, int high) {
-        int mid = (low + high) / 2;
-        int i = low, j = high;
-        while (i <= j) {
-            while (i <= high && arr[i] < arr[mid]) ++i;
-            while (j >= 0 &&arr[j] > arr[mid]) --j;
-            std::swap(arr[i], arr[j]);
+    static void QuickSort(List<T> &arr, int low, int high) {
+        if (low < high) {
+            int middle = QuickSortPartiation(arr, low, high);
+            cout << "quick sort : " << arr << endl;
+            QuickSort(arr, low, middle-1);
+            QuickSort(arr, middle+1, high);
         }
-        if (low > 0)
-            QuickSortPartiation(arr, low, mid - 1);
+    }
+    
+    static int QuickSortPartiation(List<T> &arr, int low, int high) {
+        T pro = arr[low];
         
-        QuickSortPartiation(arr, mid + 1, high);
+        while (low < high) {
+            while (low < high && arr[high] >= pro) --high;
+            arr[low] = arr[high];
+            while (low < high && arr[low] <= pro) ++low;
+            arr[high] = arr[low];            
+        }
+        arr[low] = pro;
+        return low;
     }
     
     static void
@@ -1444,7 +1487,7 @@ class CGraph
         int y; //index 
         int weight; // weight value
         struct EdgeNode *next;
-        EdgeNode(int ind, T t=0):data(t),y(ind),weight(0),next(0){            
+        EdgeNode(int ind, int wei = 0, T t=0):data(t),y(ind),weight(wei),next(0){            
         }
         friend ostream& operator << (ostream &os, EdgeNode &node){
             os << " " << node.y << " ";
@@ -1482,7 +1525,7 @@ public:
         for (int i = 0; i < nvertices; ++i) {
             cout << i << " -> " ;
             for (int w = FirstAdjVex(i); w >= 0; w = NextAdjVex(i, w)) {
-                cout << w << " -> ";
+                cout << w << " weight: " << Weight(i, w) << " -> ";
             }
             cout << endl;
         }
@@ -1495,7 +1538,23 @@ public:
         }
     }
     
-    void InsertEdge(int from, int to) {
+    int Weight(int u, int v) {
+        if (edges[u] == 0) {
+            return MAXDIS;
+        }
+        
+        EdgeNode *p = edges[u]->next;
+        while (p) {
+            if (p->y == v) {
+                return p->weight;
+            }
+            p = p->next;
+        }
+        
+        return MAXDIS;
+    }
+    
+    void InsertEdge(int from, int to, int wei = 0) {
         if (from > MAXV || to > MAXV) {
             return;
         }
@@ -1510,14 +1569,13 @@ public:
         if (p->next != NULL) {
             return;
         }
-        p->next = new EdgeNode(to);
-        
+        p->next = new EdgeNode(to, wei);        
     }
     
-    void InsertEdge(int from, int to, bool isDirected) {  
-        InsertEdge(from, to);
+    void InsertEdge(int from, int to, bool isDirected, int weight = 0) {  
+        InsertEdge(from, to, weight);
         if (!isDirected) {
-            InsertEdge(to, from);
+            InsertEdge(to, from, weight);
         }        
     }
     
@@ -1685,6 +1743,69 @@ public:
         cout << " topological :  " << v << " " << " time: " << time << endl;
     }
     
+    void MST_PRIM(int start) {
+        for (int i = 0; i < nvertices; ++i) {
+            distance[i] = MAXDIS;
+            parient[i] = -1;
+            IsVisited[i] = false;
+        }
+        
+        distance[start] = 0;
+        
+        int v = start;
+        while (IsVisited[v] == false) {
+            IsVisited[v] = true;
+            EdgeNode *p = edges[v]->next;
+            while (p) {
+                int w = p->y;
+                int weight = p->weight;
+                if (distance[w] > weight && IsVisited[w] == false) {
+                    distance[w] = weight;
+                    parient[w] = v;
+                }
+                p = p->next;
+            }
+            v = 0;
+            int minDis = MAXDIS;
+            for (int i = 0; i < nvertices; ++i) {
+                if (IsVisited[i] == false && minDis > distance[i]) {
+                    minDis = distance[i];
+                    v = i;
+                }
+            }
+        }
+        
+    }
+    
+    int GetChildFromParient(int start) {
+        for (int i = 0; i < nvertices; ++i) {
+            if (parient[i] == start) {
+                return i;
+            }
+        }
+        return -1;
+    }
+    
+    void PrintParientPath(int start) {
+        cout << start << " -> ";
+        
+        int c = GetChildFromParient(start);
+        if (c != -1) {
+            PrintParientPath(c);            
+        }
+    }
+    void Prim(){
+        MST_PRIM(0);
+        cout << "spanning tree: " << endl;
+        PrintParientPath(0);
+        cout << endl;
+        cout << "all parients : ";
+        for (int i = 0; i < nvertices; ++i) {
+            cout << "i: " << i << "parient: " << parient[i];
+        }
+        cout << endl;
+    }
+    
     static void TestG(CGraph &graph) {
         cout << "DFS: ";
         graph.DFSTraverse();
@@ -1741,10 +1862,26 @@ public:
         g.InsertEdge(8, 9, true);
         
         g.PrintAdj();
-        g.DFSAdvance();
-
+        g.DFSAdvance();        
+    }
+    static void TestWeightGraph() {
+        CGraph<char> g;
+        g.InsertEdge(0, 1, false, 4);
+        g.InsertEdge(1, 2, false, 8);
+        g.InsertEdge(2, 3, false, 7);
+        g.InsertEdge(3, 4, false, 9);
+        g.InsertEdge(4, 5, false, 10);
+        g.InsertEdge(5, 6, false, 2);
+        g.InsertEdge(6, 7, false, 1);
+        g.InsertEdge(7, 0, false, 8);
+        g.InsertEdge(7, 1, false, 1);
+        g.InsertEdge(7, 8, false, 7);
+        g.InsertEdge(8, 2, false, 2);
+        g.InsertEdge(6, 8, false, 6);
+        g.InsertEdge(5, 2, false, 4);
+        g.InsertEdge(5, 3, false, 14);
         
-        
+        g.Prim();
     }
     
     

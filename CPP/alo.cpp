@@ -127,12 +127,13 @@ int main() {
 //    List<int> ls;
 //    ls.Test();
     //BinTree<int>::TestBST();
-    CSort<int>::Test();
+    //CSort<int>::Test();
     //CDulList<int>::Test();
     //CGraph<int>::Test();
     //MFSet<int>::Test();
     //CHeapQueue<int>::Test();
-    CGraph<int>::TestDirected();
+    //CGraph<int>::TestDirected();
+    CGraph<int>::TestWeightGraph();
     return 0;
 }
 
