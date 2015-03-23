@@ -1008,7 +1008,7 @@ public:
 
     friend ostream & operator<<(ostream &os, List<T> &l)
     {
-        os << endl;
+        os << "number elements : " << l.ListLength() << endl;
         for (int i = 0; i < l.length; ++i) {
             os << l.elem[i] << " ";
         }
@@ -1082,7 +1082,14 @@ public:
         }
         return count;
     }
-
+    bool IsHave(T t) {
+        for (int i = 0; i < length; ++i) {
+            if (elem[i] == t) {
+                return true;
+            }
+        }
+        return false;
+    }
     bool
     IsSafe(int ind, int pos, List<int> &arr)
     {
@@ -1126,7 +1133,7 @@ class MFSet{
     typedef struct PNODE {
         T data;
         int parient;
-        PNODE() : data(0), parient(0){}
+        PNODE() : data(0), parient(-1){}
     }PNode;
 public:
     PNode nodes[DEFAULT_SIZE];
@@ -1431,7 +1438,7 @@ public:
     static void QuickSort(List<T> &arr, int low, int high) {
         if (low < high) {
             int middle = QuickSortPartiation(arr, low, high);
-            cout << "quick sort : " << arr << endl;
+            //cout << "quick sort : " << arr << endl;
             QuickSort(arr, low, middle-1);
             QuickSort(arr, middle+1, high);
         }
@@ -1510,6 +1517,35 @@ public:
     int fist[MAXV];
     int parient[MAXV];
     int time;
+    struct EdgePair{
+        int x;
+        int y;
+        int weight;
+        EdgePair(){}
+        EdgePair(int xx, int yy, int ww = 0):x(xx), y(yy), weight(ww){}
+        bool operator == (const EdgePair &left) {
+            if ((this->x == left.x && this->y == left.y) ||
+                (this->y == left.x && this->x == left.y)) {
+                return true;
+            }
+            return false;
+        }
+        bool operator < (const EdgePair& left) {
+            return this->weight < left.weight;
+        }
+        bool operator >= (const EdgePair& left) {
+            return this->weight >= left.weight;
+        }
+        bool operator <= (const EdgePair& left) {
+            return this->weight <= left.weight;
+        }
+        friend ostream & operator << (ostream& os, EdgePair &p) {
+            os << "weight : " << p.weight << " " << p.x << " " << p.y;
+            return os;
+        }
+    };
+    List<EdgePair> edgePair;
+    int numEdges;
     
     
     CGraph():nvertices(0), nedges(0), directed(false)
@@ -1805,7 +1841,40 @@ public:
         }
         cout << endl;
     }
-    
+    bool inEdgePair(int v, int w) {
+        for (int i = 0; i < numEdges; ++i) {
+            if ((edgePair[i].x = v && edgePair[i].y = w) || (edgePair[i].x = w && edgePair[i].y = v)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    void BuildEdgePair() {
+        numEdges = 0;
+        for (int v = 0; v < nvertices; ++v) {
+            for (int w = FirstAdjVex(v); w >= 0; w = NextAdjVex(v, w)) {
+                if (!edgePair.IsHave(EdgePair(v, w))) {
+                    edgePair.ListInsert_Sq(numEdges+1, EdgePair(v, w, Weight(v, w)));
+                    numEdges++;
+                }
+            }
+        }
+    }
+    void Kruskal() {
+        BuildEdgePair();
+        
+        MFSet<int> unionSet;
+        CSort<EdgePair> ::QuickSort(edgePair);
+        cout << "edges : " << edgePair << endl;
+        
+        for (int i = 0; i < numEdges; ++i) {
+            if (!unionSet.IsEqual(edgePair[i].x, edgePair[i].y)) {
+                cout << " edges: " << edgePair[i].x << "-->" << edgePair[i].y;
+                unionSet.MerageSet(edgePair[i].x, edgePair[i].y);
+            }
+        }
+        
+    }
     static void TestG(CGraph &graph) {
         cout << "DFS: ";
         graph.DFSTraverse();
@@ -1874,7 +1943,7 @@ public:
         g.InsertEdge(5, 6, false, 2);
         g.InsertEdge(6, 7, false, 1);
         g.InsertEdge(7, 0, false, 8);
-        g.InsertEdge(7, 1, false, 1);
+        g.InsertEdge(7, 1, false, 11);
         g.InsertEdge(7, 8, false, 7);
         g.InsertEdge(8, 2, false, 2);
         g.InsertEdge(6, 8, false, 6);
@@ -1882,6 +1951,7 @@ public:
         g.InsertEdge(5, 3, false, 14);
         
         g.Prim();
+        g.Kruskal();
     }
     
     
