@@ -1,7 +1,7 @@
 'use strict';
 
 // var a = "hello";
-// println(a);
+// console.log(a);
 
 // var extend = function (subClass, baseClass) {
 // 	subClass.baseConstructor = baseClass;
@@ -16,14 +16,14 @@
 // function Animal(name) {
 // 	this.name = name;
 // 	this.say = function (message) {
-// 		println(this.name + ": " + message);
+// 		console.log(this.name + ": " + message);
 // 	}
 // 	this.eat = function() {
 // 		this.say("Yum!");
 // 	}
 
 // 	this.respire = function() {
-// 		println(this.name + ": respire" );
+// 		console.log(this.name + ": respire" );
 // 	}
 // }
 
@@ -67,10 +67,10 @@
 // var obj2 = new Animal();
 
 
-// println(obj1.respire == obj2.respire);
+// console.log(obj1.respire == obj2.respire);
 
 // void function (i) {
-// 	println(i);
+// 	console.log(i);
 // 	(--i > 0) && arguments.callee(i);
 // }(100);
 
@@ -88,9 +88,9 @@
 // var func = obj.doFunc;
 // myFunc.call(obj);
 
-// println(func == obj.doFunc);
+// console.log(func == obj.doFunc);
 
-// println(func.toString() == obj.doFunc.toString());
+// console.log(func.toString() == obj.doFunc.toString());
 
 
 
@@ -126,11 +126,11 @@ var obj2 = new MyObject();
 
 obj1.setInstanceData(210);
 
-println(obj2.getInstanceData());
+console.log(obj2.getInstanceData());
 
 obj1.setClassData(2220);
 
-println(obj2.getClassData());
+console.log(obj2.getClassData());
 
 
 function Counter(start) {
@@ -149,12 +149,12 @@ function Counter(start) {
 var foo = Counter(4);
 var foo2 = Counter(5);
 foo.increment();
-println(foo.get()); // 5
+console.log(foo.get()); // 5
 
-println(foo.increment == foo2.increment);
+console.log(foo.increment == foo2.increment);
 
-println(Math.floor(1.2332));
-println("seven".length);
+console.log(Math.floor(1.2332));
+console.log("seven".length);
 
 function mutable(a) {
 	a = 100;
@@ -165,11 +165,11 @@ var aa = 200;
 
 aa = mutable(aa);
 
-println(aa);
+console.log(aa);
 // for(var i = 0; i < 10; i++) {
 //     (function(e) {
 //         setTimeout(function() {
-//             println(i);  
+//             console.log(i);  
 //         }, 1000);
 //     })(i);
 // }
@@ -207,10 +207,10 @@ var flight = {
 	}
 };
 
-println(obString(flight));
-println(obString(obj1));
+console.log(obString(flight));
+console.log(obString(obj1));
 
-println(flight.prototype === Object.prototype);
+console.log(flight.prototype === Object.prototype);
 
 if  (typeof Object.create !== 'function') {
 	Object.create = function (o) {
@@ -225,7 +225,7 @@ st1.firstname = "okokok";
 var st2 = Object.create(st1);
 st2.firstname = "huhuhuhu";
 delete st2.firstname;
-println(st2.firstname);
+console.log(st2.firstname);
 
 //the method invocation pattern
 var myObject = {
@@ -251,7 +251,7 @@ myObject.double2 = function () {
 }
 
 myObject.double2();
-println(myObject.value);
+console.log(myObject.value);
 
 //constructor invocation pattern
 var Quo = function(string) {
@@ -263,7 +263,7 @@ Quo.prototype.get_status = function() {
 }
 
 var myQuo = new Quo("confused");
-println(myQuo.get_status());
+console.log(myQuo.get_status());
 
 var add = function (a, b) {
 	if (typeof a !== 'number' || typeof b !== 'number') {
@@ -289,7 +289,7 @@ status: 'A-OK'
 // a get_status method.
 var status = Quo.prototype.get_status.apply(statusObject);
 // status is 'A-OK'
-println(status);
+console.log(status);
 
 
 // Make a try_it function that calls the new add
@@ -298,7 +298,7 @@ var try_it = function ( ) {
 	try {
 		add("seven");
 	} catch (e) {
-		println(e.name + ': ' + e.message);
+		console.log(e.name + ': ' + e.message);
 	}
 }
 
@@ -314,7 +314,7 @@ String.method('trim', function () {
 	return this.replace(/^\s+|\s+$/g, '');
 });
 
-println('"' + " neat ".trim( ) + '"');
+console.log('"' + " neat ".trim( ) + '"');
 
 var myObject = function () {
 	var value = 0;
@@ -330,8 +330,8 @@ var myObject = function () {
 }();
 
 myObject.increment(2);
-println(myObject.getValue());
-println(myObject.value);
+console.log(myObject.getValue());
+console.log(myObject.value);
 
 // Create a maker function called quo, It makes an object with a get_status method and private status property
 
@@ -345,7 +345,7 @@ var quo = function (status) {
 
 var myQuo = quo('amazed');
 
-println(myQuo.get_status());
+console.log(myQuo.get_status());
 
 // BAD EXAMPLE
 // Make a function that assigns event handler functions to an array of nodes the wrong way.
@@ -355,7 +355,7 @@ var add_the_handlers = function (nodes) {
 var i;
 	for (i = 0; i < nodes.length; i += 1) {
 		nodes[i].onclick = function (e) {
-			println(i);
+			console.log(i);
 		};
 	}
 };
@@ -400,7 +400,7 @@ String.method('deentityify', function() {
 	};
 }());
 
-println('&lt;&quot;&gt;'.deentityify());
+console.log('&lt;&quot;&gt;'.deentityify());
 
 //Memoization
 
@@ -418,7 +418,7 @@ var fibonacci = function () {
 }();
 
 for (var i = 0; i <= 10; ++ i) {
-	println(fibonacci(i));
+	console.log(fibonacci(i));
 }
 
 /*
@@ -449,7 +449,7 @@ return n * shell(n - 1);
 });
 
 for (var i = 0; i <= 10; ++ i) {
-	println(fibonacci2(i));
+	console.log(fibonacci2(i));
 }
 
 var serial_maker = function () {
@@ -472,11 +472,11 @@ var serial_maker = function () {
 
 var seqer = serial_maker();
 
-println(seqer);
+console.log(seqer);
 
 seqer.set_prefix('Q');
 seqer.set_seq(1000);
-println(seqer.gensym());
+console.log(seqer.gensym());
 
 /*
 
@@ -504,7 +504,7 @@ var mammal = function (spec) {
 	return that;
 }
 var myMammal = mammal({name: 'Herb'});
-println(myMammal.get_name());
+console.log(myMammal.get_name());
 
 var cat = function (spec) {
 	spec.saying = spec.saying || 'meow';
@@ -529,8 +529,8 @@ var cat = function (spec) {
 
 var myCat = cat({name:'Henrietta'});
 
-println(myCat.get_name());
-println(myCat.purr(10));
+console.log(myCat.get_name());
+console.log(myCat.purr(10));
 
 Object.method('superior', function (name) {
 	var that = this,
@@ -601,7 +601,7 @@ var coolcat = function (spec) {
 
 var myCoolCat = coolcat({name: 'bix'});
 
-println(myCoolCat.get_name());
+console.log(myCoolCat.get_name());
 
 var is_array = function (value) {
 	return value &&
@@ -633,12 +633,12 @@ var mult = function (a, b) {
 // Invoke the data's reduce method, passing in the
 // add function.
 var sum = data.reduce(add, 0); // sum is 108
-println(sum);
+console.log(sum);
 // Invoke the reduce method again, this time passing
 // in the multiply function.
 var product = data.reduce(mult, 1);
 // product is 7418880
-println(product);
+console.log(product);
 
 // Give the data array a total function.
 data.total = function ( ) {
@@ -668,7 +668,7 @@ Array.matrix = function (m, n, initial) {
 };
 // Make a 4 * 4 matrix filled with zeros.
 var myMatrix = Array.matrix(4, 4, 0);
-println(myMatrix[3][3]); // 0
+console.log(myMatrix[3][3]); // 0
 // Method to make an identity matrix.
 Array.identity = function (n) {
 	var i, mat = Array.matrix(n, n, 0);
@@ -678,7 +678,7 @@ Array.identity = function (n) {
 	return mat;
 };
 myMatrix = Array.identity(4);
-println(myMatrix[3][3]); // 1
+console.log(myMatrix[3][3]); // 1
 
 var parse_url = /^(?:([A-Za-z]+):)?(\/{0,3})([0-9.\-A-Za-z]+)(?::(\d+))?(?:\/([^?#]*))?(?:\?([^#]*))?(?:#(.*))?$/;
 var url = "http://www.ora.com:80/goodparts?q#fragment";
@@ -688,9 +688,9 @@ var names = ['url', 'scheme', 'slash', 'host', 'port',
 'path', 'query', 'hash'];
 var blanks = ' ';
 var i;
-println(result);
+console.log(result);
 for (i = 0; i < names.length; i += 1) {
-	println(names[i] + ':' + blanks.substring(names[i].length), result[i]);
+	console.log(names[i] + ':' + blanks.substring(names[i].length), result[i]);
 }
 
 
@@ -943,6 +943,8 @@ return function (source, reviver) {
 	};
 }();
 
+console.log("parser json");
+console.log(json_parse('{"IUT":"9090"}'));
 
 
 

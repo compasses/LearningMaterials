@@ -112,9 +112,51 @@ bool BracketsMatching(const char *matchStr) {
     return false;
 
 }
+int FindNthMax_Bubble(int a[], int len, int k) {
+    
+    if (len < k) {
+        return -1;
+    }
 
+    for (int i = 0; i < k; ++i) {
+        for (int j = 0; j < len-1; ++j){
+            if (a[j] > a[j+1]) {
+                std::swap(a[j], a[j+1]);
+            }
+        }
+    }
+
+    cout << "The " << k << "th max:" << a[len-k] << endl;
+    return a[len-k];
+}
+int FindSecondMax(int a[], int len) {
+    #define MAXINT 0xffffffff
+    if (len < 2)
+        return -1;
+
+    int fmax,smax;
+    //fmax=smax= MAXINT;
+    fmax = a[0];
+    smax = a[1];
+
+    cout << "before:" << fmax << endl;
+    for (int i = 0; i < len; ++i) {
+        if (a[i] > fmax) {
+            smax = fmax;
+            fmax = a[i];
+        }
+        if (a[i] > smax && a[i] < fmax) {
+            smax = a[i];
+        }
+    }
+    cout << "first max:" << fmax << "second max:" << smax << endl;
+    return smax;
+}
 int main() {
 
+    int a[] = {90, 23, -100, 1, 0, 300, 400, 900, 800};
+    FindSecondMax(a, 9);
+    FindNthMax_Bubble(a, 9, 2);
     //conversion(10000, 10);
     //BracketsMatching("{(){<<<>>>}}-");
 
@@ -133,7 +175,7 @@ int main() {
     //MFSet<int>::Test();
     //CHeapQueue<int>::Test();
     //CGraph<int>::TestDirected();
-    CGraph<int>::TestWeightGraph();
+   // CGraph<int>::TestWeightGraph();
     return 0;
 }
 
