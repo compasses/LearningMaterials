@@ -12,7 +12,7 @@ using namespace std;
 
 class MemAlloc
 {
-private:
+public:
 
     enum
     {
@@ -39,9 +39,27 @@ private:
     {
         return ((bytes + ALIGN - 1) / ALIGN - 1);
     }
-
-
+    static char *start_free;
+    static char *end_free;
+    static size_t heap_size;
+public:
+    static void *allocate(size_t n) {
+        obj * volatile *my_free_list;
+        obj * result;
+        if (n > (size_t)MAX_BYTES) {
+            return malloc(n);
+        }
+        my_free_list = free_list + FREELIST_INDEX(n);
+        
+    }
+    static void deallocate(void *p, size_t n);
+    static void *reallocate(void *p, size_t old_sz, size_t new_sz);
 };
+char *MemAlloc::start_free = 0;
+char *MemAlloc::end_free = 0;
+size_t MemAlloc::heap_size = 0;
+MemAlloc::obj *free_list[MemAlloc::NUMFREELIST] = {
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
 template<typename T>
 class CDulList
@@ -499,7 +517,7 @@ class BinTree
             return os;
         }
     } BiNode;
-private:
+public:
     BiNode *tree;
 
 public:
@@ -769,16 +787,38 @@ public:
     static void
     TestBST()
     {
-        int a[] = {45, 24, 53, 45, 12, 24, 90};
+        int a[] = {45, 24, 53, 45, 12, 24, 90, 100, 34, 58};
         BinTree<int> tree;
-        for (int i = 0; i < 100; ++i)
-            tree.InsertBST(rand() % 7177);
+        for (int i = 0; i < 10; ++i)
+            tree.InsertBST(a[i]);
         cout << "InOrder: ";
         tree.InOrderTrav2();
-        cout << "depth: " << tree.GetDepth();
+        cout << "depth: " << tree.GetDepth() << endl;
         tree.DeleteBST(45);
         tree.InOrderTrav2();
-        cout << "depth: " << tree.GetDepth();
+        cout << "depth: " << tree.GetDepth() << endl;
+        
+        BinTree<int> tree3;        
+        BinTree<int>::BuildAVL(tree3, a, 10);
+        cout << "InOrder3: ";
+        tree3.InOrderTrav2();
+        cout << "depth: " << tree3.GetDepth() << endl;
+        
+        int ra[1199];
+        for (int i= 0; i < 1199; ++i){
+            ra[i] = random()%7777;
+        }
+        
+        BinTree<int> t1, t2, t3;
+        BinTree<int>::BuildAVL(t1, ra, 1199);
+        for (int i = 0; i < 1199; ++i){
+            t2.InsertBST(ra[i]);
+        }
+        cout << "t1 depth: " << t1.GetDepth() << " t2 depth: " << t2.GetDepth() << endl;
+        cout << "t1 InOrder:" ;
+     //   t1.InOrderTrav2();
+        cout << "t2 InOrder:";
+       // t2.InOrderTrav2();
     }
 
     static void
@@ -838,10 +878,42 @@ public:
     }
 
     static void
-    RightBalence(BiNode *&node)
+    RightBalence(BiNode *&root)
     {
+        BiNode *rRoot = root->right;
+        switch(rRoot->bf) {
+            case RH://new insert into the right node right child
+                rRoot->bf = root->bf = EH;
+                LeftRotate(root);
+                break;
+            case LH://new node insert into right tree's left child
+                BiNode *lRoot = rRoot->left;
+                switch(lRoot->bf){
+                    case LH:
+                        root->bf = EH;
+                        rRoot->bf = RH;
+                        break;
+                    case EH:
+                        root->bf = rRoot->bf = EH;
+                        break;
+                    case RH:
+                        root->bf = LH;
+                        rRoot->bf = EH;
+                        break;
+                }
+                lRoot->bf = EH;
+                RightRotate(root->right);
+                LeftRotate(root);
+                break;
+        }
     }
-
+    
+    static void BuildAVL(BinTree<T> &tree, T a[], int len) {
+        bool taller = false;
+        for (int i = 0; i < len; ++i) {
+            BinTree<int>::InsertAVL(tree.tree, a[i], taller);
+        }
+    }
     static bool
     InsertAVL(BiNode *&node, T t, bool &taller)
     {
@@ -936,6 +1008,15 @@ public:
             ListInsert_Sq(i+1, a[i]);
         }
     }
+    
+    List(int size, bool randomSet) {
+        elem = new T[size];
+        length = 0;
+        listSize = size;
+        for (int i = 0; i < size; ++i) {
+            ListInsert_Sq(i+1, random()%7777);
+        }
+    }
 
     int
     ListLength()
@@ -1015,7 +1096,7 @@ public:
 
         return os;
     }
-
+    
     int
     GetPowerSet(int i, List<T> A, List<T> &B)
     {

@@ -154,9 +154,9 @@ int FindSecondMax(int a[], int len) {
 }
 int main() {
 
-    int a[] = {90, 23, -100, 1, 0, 300, 400, 900, 800};
-    FindSecondMax(a, 9);
-    FindNthMax_Bubble(a, 9, 2);
+    //int a[] = {90, 23, -100, 1, 0, 300, 400, 900,900, 800};
+    //FindSecondMax(a, 10);
+    //FindNthMax_Bubble(a, 10, 2);
     //conversion(10000, 10);
     //BracketsMatching("{(){<<<>>>}}-");
 
@@ -166,9 +166,9 @@ int main() {
 //    const char *s = "ABC  DE  G  F   ";
 //    BinTree<char> binT(s);
 //    binT.Test();
-//    List<int> ls;
+//   List<int> ls;
 //    ls.Test();
-    //BinTree<int>::TestBST();
+    BinTree<int>::TestBST();
     //CSort<int>::Test();
     //CDulList<int>::Test();
     //CGraph<int>::Test();
