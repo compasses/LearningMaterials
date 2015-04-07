@@ -354,9 +354,9 @@ console.log(myQuo.get_status());
 var add_the_handlers = function (nodes) {
 var i;
 	for (i = 0; i < nodes.length; i += 1) {
-		nodes[i].onclick = function (e) {
-			console.log(i);
-		};
+		//nodes[i].onclick = function (e) {
+		//	console.log(i);
+		//};
 	}
 };
 
@@ -947,6 +947,9 @@ console.log("parser json");
 console.log(json_parse('{"IUT":"9090"}'));
 
 
-
-
+var str = '/sbo/SalesOrder(2)';
+var reg1 = /SalesOrder\((\d+)\)/g;
+var res = reg1.exec(str);
+console.log(res);
+console.log(str.match(reg1));
 
