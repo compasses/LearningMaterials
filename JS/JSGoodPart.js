@@ -354,9 +354,9 @@ console.log(myQuo.get_status());
 var add_the_handlers = function (nodes) {
 var i;
 	for (i = 0; i < nodes.length; i += 1) {
-		nodes[i].onclick = function (e) {
-			console.log(i);
-		};
+		//nodes[i].onclick = function (e) {
+		//	console.log(i);
+		//};
 	}
 };
 
@@ -947,6 +947,57 @@ console.log("parser json");
 console.log(json_parse('{"IUT":"9090"}'));
 
 
+var str = '/sbo/SalesOrder(2)';
+var reg1 = /SalesOrder\((\d+)\)/g;
+var res = reg1.exec(str);
+console.log(res);
+console.log(str.match(reg1));
 
 
 
+//if (!Function.prototype.softBind) {
+    Function.prototype.softBind = function(obj) {
+        var fn = this,
+            curried = [].slice.call( arguments, 1 ),
+            bound = function bound() {
+                return fn.apply(
+                    (!this ||
+                        (typeof window !== "undefined" &&
+                            this === window) ||
+                        (typeof global !== "undefined" &&
+                            this === global)
+                    ) ? obj : this,
+                    curried.concat.apply( curried, arguments )
+                );
+            };
+            console.log("---------" + curried);
+        bound.prototype = Object.create( fn.prototype );
+        return bound;
+    };
+//}
+Function.prototype.count = 0;
+
+var foo = function () {
+   console.log("name: " + this.name);
+}
+var fbb = new Function();
+
+console.log("---function count-----" + fbb.count);
+
+var obj = { name: "obj" },
+    obj2 = { name: "obj2" },
+    obj3 = { name: "obj3" };
+
+//console.log(foo);
+//foo.softBind(obj);
+var fooOBJ = foo.softBind( obj, 1, 2, 3, 4 );
+
+fooOBJ(); // name: obj
+
+obj2.foo = foo.softBind(obj);
+obj2.foo(); // name: obj2   <---- look!!!
+
+fooOBJ.call( obj3 ); // name: obj3   <---- look!
+var bar = obj2.foo;
+bar();
+setTimeout( function (){bar();}, 10 ); // name: obj   <---- falls back to soft-binding
