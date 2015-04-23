@@ -1,6 +1,6 @@
 LearningMaterials
 ==============
-Learning assembly for linux-x64
+training of javascript and algorithm of c++
 
 Examples
 ==============
