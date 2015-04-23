@@ -1,3 +1,5 @@
+"use strict";
+
 var server = require("./server"),
 	router = require("./router"),
 	requestHandler = require("./requestHandler");
@@ -15,6 +17,9 @@ handle['placeOrder']			= requestHandler.placeOrder;
 handle['getSalesOrders']		= requestHandler.getSalesOrders;
 handle['getSalesOrder']			= requestHandler.getSalesOrder;
 handle['logIn']					= requestHandler.logIn;
+handle['mytenants']				= requestHandler.mytenants;
+handle['exchangeToken']			= requestHandler.exchangeToken;
+handle['createEShopCustomer']	= requestHandler.createEShopCustomer;
 
 
 global.Debug 	= 0;

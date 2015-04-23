@@ -1,3 +1,5 @@
+"use strict";
+
 var exec = require("child_process").exec;
 
 function start(response, postData) {
@@ -20,7 +22,8 @@ function getATSForChannel(response, postData) {
     });
 
     res.value.entries = entries;
-    response.write(JSON.stringify(res));
+    var stream = new Buffer(JSON.stringify(res));
+    response.write(stream);//new Buffer(JSON.stringify(res)
     response.end();
     if (global.Debug) {
         console.log(JSON.stringify(res));
@@ -37,8 +40,11 @@ function miscCheck(response, postData) {
     var res = {value:{lineResult:[]}};
     var lineResult = [];
     
+    var index = 1;
     keys.forEach(function(item, index, array){
-        lineResult.push({skuId: item.skuId, ats: 900, standardPrice: 1000, price: 2000, onChannel: true, allowBackOrder: true});
+        lineResult.push({skuId: item.skuId, ats: 900, standardPrice: 1000, price: 2000, 
+                        onChannel: index == 1? false:true, allowBackOrder: true});
+        index++;
     });
 
     res.value.lineResult = lineResult;
@@ -75,11 +81,16 @@ function checkoutShoppingCart (response, postData){
 function procOrder(order) {
     var orderTotal = 0,
         cartTotal  = 0;
+    
+    var itemNum    = 0;
     order.shoppingCart.cartItems.forEach(function (item, index, array){
         var lineTotal = item.unitPrice * item.quantity;
         item.lineTotal = lineTotal;
         cartTotal += lineTotal;
+        itemNum++;
     });
+    console.log('item number is ' + itemNum);
+
     order.shoppingCart.cartTotal = cartTotal;
     if (order.shippingMethod != null) {
         order.orderTotal = cartTotal + order.shippingMethod.cost;
@@ -111,8 +122,8 @@ function getShippingCosts(response, postData) {
             type : i,
             name : "from mock Service fast",
             cost : 1000*(i+1),
-            minDeliveryDays: 1,
-            maxDeliveryDays: 1
+            minDeliveryDays: 1*i,
+            maxDeliveryDays: 2*(i+1)
             //default: true
         };
         arr.push(data);
@@ -288,7 +299,7 @@ function getSalesOrder(response, postData) {
 
 function logIn(response, postData) {
     console.log("handle for logIn: ");
-    if (1) {
+    if (global.Debug) {
         console.log("logIn Data: " + postData);
     }
     var res = {
@@ -299,12 +310,57 @@ function logIn(response, postData) {
     response.end();
 }
 
-exports.start = start;
-exports.getATSForChannel        = getATSForChannel;
-exports.miscCheck               = miscCheck;
-exports.checkoutShoppingCart    = checkoutShoppingCart;
-exports.getShippingCosts        = getShippingCosts;
-exports.placeOrder              = placeOrder;
-exports.getSalesOrders          = getSalesOrders;
-exports.getSalesOrder           = getSalesOrder;
-exports.logIn                   = logIn;
+function mytenants(response, postData) {
+    console.log("handle for mytenants: ");
+    if (1) {
+        console.log("mytenants Data: " + postData);
+    }
+    var res = {
+        code: "P011B00000",
+        token:"MOCKSERVER"
+    }
+    response.write(JSON.stringify(res));
+    response.end();
+}
+
+function exchangeToken(response, postData) {
+    console.log("handle for exchangeToken: ");
+    if (1) {
+        console.log("exchangeToken Data: " + postData);
+    }
+    var res = {
+        code: "P011B00000",
+        token:"MOCKSERVER"
+    }
+    response.write(JSON.stringify(res));
+    response.end();
+}
+
+function createEShopCustomer(response, postData) {
+    console.log("handle for createEShopCustomer: ");
+    if (1) {
+        console.log("createEShopCustomer Data: " + postData);
+    }
+    var res = {
+        customerCode: "P011B00000",
+        customerID:"MOCKSERVER",
+        channelAccountID:"121212"
+    }
+    response.write(JSON.stringify(res));
+    response.end();
+
+}
+
+module.exports = {};
+module.exports.start = start;
+module.exports.getATSForChannel        = getATSForChannel;
+module.exports.miscCheck               = miscCheck;
+module.exports.checkoutShoppingCart    = checkoutShoppingCart;
+module.exports.getShippingCosts        = getShippingCosts;
+module.exports.placeOrder              = placeOrder;
+module.exports.getSalesOrders          = getSalesOrders;
+module.exports.getSalesOrder           = getSalesOrder;
+module.exports.logIn                   = logIn;
+module.exports.mytenants               = mytenants;
+module.exports.exchangeToken           = exchangeToken;
+module.exports.createEShopCustomer     = createEShopCustomer;
