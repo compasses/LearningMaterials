@@ -19,14 +19,14 @@
 var x = "outside";
 
 var f1 = function() {
-  var x = "inside f1";
+    var x = "inside f1";
 };
 f1();
 console.log(x);
 // → outside
 
 var f2 = function() {
-  x = "inside f2";
+    x = "inside f2";
 };
 f2();
 console.log(x);
@@ -34,78 +34,81 @@ console.log(x);
 
 
 var landscape = function() {
-  var result = "";
-  var flat = function(size) {
-    for (var count = 0; count < size; count++)
-      result += "_";
-  };
-  var mountain = function(size) {
-    result += "/";
-    for (var count = 0; count < size; count++)
-      result += "'";
-    result += "\\";
-  };
+    var result = "";
+    var flat = function(size) {
+        for (var count = 0; count < size; count++)
+            result += "_";
+    };
+    var mountain = function(size) {
+        result += "/";
+        for (var count = 0; count < size; count++)
+            result += "'";
+        result += "\\";
+    };
 
-  flat(3);
-  mountain(4);
-  flat(6);
-  mountain(1);
-  flat(1);
-  return result;
+    flat(3);
+    mountain(4);
+    flat(6);
+    mountain(1);
+    flat(1);
+    return result;
 };
 
 console.log(landscape());
 // → ___/''''\______/'\_
 
 function power(base, exponent) {
-  if (exponent == 0)
-    return 1;
-  else
-    return base * power(base, exponent - 1);
+    if (exponent == 0)
+        return 1;
+    else
+        return base * power(base, exponent - 1);
 }
 
 console.log(power(2, 10000));
 
 function findSolution(target) {
-  function find(start, history) {
-    if (start == target)
-      return history;
-    else if (start > target)
-      return null;
-    else
-      return find(start + 5, "(" + history + " + 5)") ||
-             find(start * 3, "(" + history + " * 3)");
-  }
-  return find(1, "1");
+    function find(start, history) {
+        if (start == target)
+            return history;
+        else if (start > target)
+            return null;
+        else
+            return find(start + 5, "(" + history + " + 5)") ||
+                find(start * 3, "(" + history + " * 3)");
+    }
+    return find(1, "1");
 }
 
 console.log(findSolution(124));
 
 
 function zeroPad(number, width) {
-  var string = String(number);
-  while (string.length < width)
-    string = "0" + string;
-  return string;
+    var string = String(number);
+    while (string.length < width)
+        string = "0" + string;
+    return string;
 }
 
 function printFarmInventory(cows, chickens, pigs) {
-  console.log(zeroPad(cows, 3) + " Cows");
-  console.log(zeroPad(chickens, 3) + " Chickens");
-  console.log(zeroPad(pigs, 3) + " Pigs");
+    console.log(zeroPad(cows, 3) + " Cows");
+    console.log(zeroPad(chickens, 3) + " Chickens");
+    console.log(zeroPad(pigs, 3) + " Pigs");
 }
 
 printFarmInventory(7, 16, 3);
 
 var todoList = [];
+
 function rememberTo(task) {
-  todoList.push(task);
+    todoList.push(task);
 }
+
 function whatIsNext() {
-  return todoList.shift();
+    return todoList.shift();
 }
+
 function urgentlyRememberTo(task) {
-  todoList.unshift(task);
+    todoList.unshift(task);
 }
 
 rememberTo('first');
@@ -121,41 +124,43 @@ console.log([1, 2, 3, 2, 1].lastIndexOf(2));
 // → 3
 
 function remove(array, index) {
-  return array.slice(0, index)
-    .concat(array.slice(index + 1));
+    return array.slice(0, index)
+        .concat(array.slice(index + 1));
 }
 console.log(remove(["a", "b", "c", "d", "e"], 2));
 // → ["a", "b", "d", "e"]
 
 function randomPointOnCircle(radius) {
-  console.log(Math);
-  var angle = Math.random() * 2 * Math.PI;
-  return {x: radius * Math.cos(angle),
-          y: radius * Math.sin(angle)};
+    console.log(Math);
+    var angle = Math.random() * 2 * Math.PI;
+    return {
+        x: radius * Math.cos(angle),
+        y: radius * Math.sin(angle)
+    };
 }
 console.log(randomPointOnCircle(2));
 // → {x: 0.3667, y: 1.966}
 
 // Your code here.
 function reverseArray(arr) {
-  var newA = [];
-  for (var i = arr.length - 1; i >= 0; --i) {
-    newA.push(arr[i]);
-  }
+    var newA = [];
+    for (var i = arr.length - 1; i >= 0; --i) {
+        newA.push(arr[i]);
+    }
 
-  return newA;
+    return newA;
 }
 
 function reverseArrayInPlace(arr) {
-  var len = arr.length-1;
-  var end = 0;
-  while (len > end) {
-    var t = arr[len];
-    arr[len] = arr[end];
-    arr[end] = t;
-    len--;
-    end++;
-  }
+    var len = arr.length - 1;
+    var end = 0;
+    while (len > end) {
+        var t = arr[len];
+        arr[len] = arr[end];
+        arr[end] = t;
+        len--;
+        end++;
+    }
 }
 
 
@@ -168,34 +173,34 @@ console.log(arrayValue);
 
 // Your code here.
 function arrayToList(arr) {
-  if (arr.length === 0) {
-    return null;
-  } else {
-    return {
-      value: arr[0],
-      rest: arrayToList(arr.slice(1))
-    };
-  }
+    if (arr.length === 0) {
+        return null;
+    } else {
+        return {
+            value: arr[0],
+            rest: arrayToList(arr.slice(1))
+        };
+    }
 }
 
 function listToArray(list) {
-  var res = [];
-  if (list === null) {
+    var res = [];
+    if (list === null) {
+        return res;
+    }
+    do {
+        res.push(list.value);
+        list = list.rest;
+    } while (list !== null);
+
     return res;
-  }
-  do {
-    res.push(list.value);
-    list = list.rest;
-  }while (list !== null);
-  
-  return res;
 }
 
 function prepend(val, list) {
-  return {
-    value: val,
-    rest: list
-  };
+    return {
+        value: val,
+        rest: list
+    };
 }
 
 // function nth(list, nth) {
@@ -211,52 +216,151 @@ function prepend(val, list) {
 // }
 
 function nth(list, num) {
-  if (list === null) {
-    return undefined;
-  }
-  if (num === 0) {
-    return list.value;
-  }
+    if (list === null) {
+        return undefined;
+    }
+    if (num === 0) {
+        return list.value;
+    }
 
-  return nth(list.rest, --num);
+    return nth(list.rest, --num);
 }
 
 console.log(arrayToList([10, 20, 30]));
 // → {value: 10, rest: {value: 20, rest: null}}
- console.log(listToArray(arrayToList([10, 20, 30])));
+console.log(listToArray(arrayToList([10, 20, 30])));
 // // → [10, 20, 30]
- console.log(prepend(10, prepend(20, null)));
+console.log(prepend(10, prepend(20, null)));
 // // → {value: 10, rest: {value: 20, rest: null}}
- console.log(nth(arrayToList([10, 20, 30]), 2));
+console.log(nth(arrayToList([10, 20, 30]), 2));
 // → 20
 
 // Your code here.
 
 function deepEqual(obj1, obj2) {
-  //console.log(typeof obj1);
-  if (typeof obj1 === 'object' && obj1 !== null && typeof obj2 === typeof obj1) {
-    for (var prop in obj1) {
-      if (deepEqual(obj1[prop], obj2[prop]) === false) {
+    //console.log(typeof obj1);
+    if (typeof obj1 === 'object' && obj1 !== null && typeof obj2 === typeof obj1) {
+        for (var prop in obj1) {
+            if (deepEqual(obj1[prop], obj2[prop]) === false) {
+                return false;
+            }
+        }
+        return true;
+    } else if (typeof obj1 !== typeof obj2) {
         return false;
-      }
+    } else {
+        return obj1 === obj2;
     }
-    return true;
-  } else if (typeof obj1 !== typeof obj2 ) {
-    return false;
-  } else {
-    return obj1 === obj2;
-  }
 }
 
 
-var obj = {here: {is: "an"}, object: 2};
+var obj = {
+    here: {
+        is: "an"
+    },
+    object: 2
+};
 console.log(deepEqual(obj, obj));
 // → true
-console.log(deepEqual(obj, {here: 1, object: 2}));
+console.log(deepEqual(obj, {
+    here: 1,
+    object: 2
+}));
 // → false
-console.log(deepEqual(obj, {here: {is: "ana"}, object: 2}));
+console.log(deepEqual(obj, {
+    here: {
+        is: "ana"
+    },
+    object: 2
+}));
 // → false
-console.log(deepEqual([1,2,3], [1,2,4]));
+console.log(deepEqual([1, 2, 3], [1, 2, 4]));
+
+//chapter 5 higher order function
+function forEach(array, action) {
+    for (var i = 0; i < array.length; ++i) {
+        action(array[i]);
+    }
+}
+
+var numbers = [1, 2, 3, 4, 5],
+    sum = 0;
+forEach(numbers, function(number) {
+    sum += number;
+});
+console.log(sum);
+// → 15
+
+function noisy(f) {
+    return function(arg) {
+        console.log("calling with", arg);
+        var val = f(arg);
+        console.log("called with", f.toString(), arg, "- got", val);
+        return val;
+    };
+}
+noisy(Boolean)(0);
+// → calling with 0
+// → called with 0 - got false
 
 
+function unless(test, then) {
+    if (!test) then();
+}
 
+function repeat(times, body) {
+    for (var i = 0; i < times; i++) body(i);
+}
+
+repeat(3, function(n) {
+    unless(n % 2, function() {
+        console.log(n, "is even");
+    });
+});
+// → 0 is even
+// → 2 is even
+
+function transparentWrapping(f) {
+    return function() {
+        return f.apply(null, arguments);
+    };
+}
+
+var string = JSON.stringify({
+    name: "X",
+    born: 1980
+});
+console.log(string);
+// → {"name":"X","born":1980}
+console.log(JSON.parse(string).born);
+// → 1980
+
+var ANCESTRY_FILE = require('./ancestry.js');
+var ancestry = JSON.parse(ANCESTRY_FILE);
+console.log(ancestry.length);
+// → 39
+
+console.log(ancestry.filter(function(person) {
+    return person.father == "Carel Haverbeke";
+}));
+
+// var tt = [1, 2];
+// tt.forEach(function(){
+//   console.log(arguments);
+// });
+
+var theSet = ["Carel Haverbeke", "Maria van Brussel",
+    "Donald Duck"
+];
+
+function isInSet(set, person) {
+    return set.indexOf(person.name) > -1;
+}
+
+console.log(ancestry.filter(function(person) {
+    return isInSet(theSet, person);
+}));
+// → [{name: "Maria van Brussel", …},
+//    {name: "Carel Haverbeke", …}]
+console.log(ancestry.filter(isInSet.bind(null, theSet)));
+// → … same result
