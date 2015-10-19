@@ -1,8 +1,8 @@
 "use strict";
 
 var server = require("./server"),
-	router = require("./router"),
-	requestHandler = require("./requestHandler");
+    router = require("./router"),
+    requestHandler = require("./requestHandler");
 
 
 var handle = {};
